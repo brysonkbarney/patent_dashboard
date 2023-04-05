@@ -1,0 +1,54 @@
+/* General body styling */
+body {
+  font-family: Arial, sans-serif;
+  color: #333333;
+}
+
+/* Navbar header */
+.navbar-custom {
+  background-color: #010BFF;
+  border-color: #007BFF;
+}
+
+/* Navbar header text */
+.navbar-custom .navbar-brand {
+  color: #FFFFFF;
+}
+
+/* Sidebar menu background */
+.sidebar {
+  background-color: #F8F9FA;
+}
+
+/* Sidebar menu item */
+.nav-item {
+  font-weight: bold;
+}
+
+/* Sidebar menu item active */
+.nav-item.active {
+  background-color: #007BFF;
+  color: #FFFFFF;
+}
+
+/* Input labels */
+.shiny-input-container label {
+  font-weight: bold;
+}
+
+/* Action button */
+.btn-primary {
+  background-color: #007BFF;
+  border-color: #007BFF;
+}
+
+/* Analysis chart box */
+.box {
+  border-color: #007BFF;
+}
+
+/* Analysis chart box header */
+.box-header {
+  background-color: #007BFF;
+  color: #FFFFFF;
+}
