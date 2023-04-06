@@ -28,9 +28,9 @@ ui <- dashboardPage(
               fluidRow(
                 column(4,
                        wellPanel(
-                         textInput("comp_input1", "Input 1:", ""),
-                         textInput("comp_input2", "Input 2:", ""),
-                         textInput("comp_input3", "Input 3:", ""),
+                         selectInput("comp_input1", "Patent Codes", choices = c("Option 1", "Option 2", "Option 3")),
+                         selectInput("comp_input2", "Patent Subcodes", choices = c("Option 1", "Option 2", "Option 3")),
+                         selectInput("comp_input3", "Graph Type", choices = c("Option 1", "Option 2", "Option 3")),
                          actionButton("comp_analyze", "Analyze")
                        )
                 ),
