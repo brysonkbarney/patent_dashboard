@@ -30,7 +30,7 @@ ui <- dashboardPage(
                        wellPanel(
                          selectInput("comp_input1", "Patent Codes", choices = c("Option 1", "Option 2", "Option 3")),
                          selectInput("comp_input2", "Patent Subcodes", choices = c("Option 1", "Option 2", "Option 3")),
-                         selectInput("comp_input3", "Graph Type", choices = c("Total Patents", "CAGR", "AVG Claims")),
+                         selectInput("comp_input3", "Graph Type", choices = c("Total Patents", "CAGR", "Avg Claims")),
                          actionButton("comp_analyze", "Analyze")
                        )
                 ),
@@ -51,9 +51,9 @@ ui <- dashboardPage(
               fluidRow(
                 column(4,
                        wellPanel(
-                         textInput("trends_input1", "Input 1:", ""),
-                         textInput("trends_input2", "Input 2:", ""),
-                         textInput("trends_input3", "Input 3:", ""),
+                         selectInput("comp_input1", "Patent Codes", choices = c("Option 1", "Option 2", "Option 3")),
+                         selectInput("comp_input2", "Patent Subcodes", choices = c("Option 1", "Option 2", "Option 3")),
+                         selectInput("comp_input3", "Graph Type", choices = c("Option 1", "Option 2", "Option 3")),
                          actionButton("trends_analyze", "Create Graph")
                        )
                 ),
@@ -75,18 +75,26 @@ ui <- dashboardPage(
 # Define the server logic
 server <- function(input, output, session) {
  
-  generateChartCompChart <- reactive({
+  generateTotalPatentsChart <- reactive({
+    
+  })
+  
+  generateCGRChart <- reactive({
+    
+  })
+  
+  generateAvgClaimsChart <- reactive({
     
   })
   
   generateChartCompChart <- reactive({
     data <- data.frame(x = 1:10, y = rnorm(10))
     if (input$comp_input3 == "Total Patents") {
-      plot(data$x, data$y)
+      generateTotalPatentsChart()
     } else if (input$comp_input3 == "CAGR") {
-      barplot(data$y)
-    } else if (input$comp_input3 == "AVG Claims") {
-      hist(data$y)
+      generateCGRChart(data$y)
+    } else if (input$comp_input3 == "Avg Claims") {
+      generateAvgClaimsChart(data$y)
     }
   })
   
