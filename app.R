@@ -99,7 +99,7 @@ ui <- dashboardPage(
               selectInput(
                 "comp_input3",
                 "Graph Type",
-                choices = c("Option 1", "Option 2", "Option 3")
+                choices = c("Timeline", "State Map", "Option 3")
               ),
               actionButton("trends_analyze", "Create Graph")
             )
@@ -242,6 +242,14 @@ server <- function(input, output, session) {
   patent_id <- reactive({
     paste0(input$patent_code_input, input$patent_subcode_input)
   })
+  
+  generateTimeline <- function(patent_id) {
+    
+  }
+  
+  generateMap <- function(patent_id) {
+    
+  }
 
   generateChartCompChart <- reactive({
     data <- data.frame(x = 1:10, y = rnorm(10))
@@ -251,6 +259,17 @@ server <- function(input, output, session) {
       generateCGRChart(patent_id)
     } else if (input$comp_graph_type_input == "Avg Claims") {
       generateAvgClaimsChart(patent_id)
+    }
+  })
+  
+  generateTrendChart <- reactive({
+    data <- data.frame(x = 1:10, y = rnorm(10))
+    if (input$comp_graph_type_input == "Timeline") {
+      generateTimeline(patent_id)
+    } else if (input$comp_graph_type_input == "State Map") {
+      generateMap(patent_id)
+    } else if (input$comp_graph_type_input == "Avg Claims") {
+        # Add function heree
     }
   })
 
@@ -267,7 +286,12 @@ server <- function(input, output, session) {
 
   # Trends Analysis chart output
   output$trends_chart <- renderPlot({
-    # Placeholder for the chart generation code
+    {
+      output$comp_chart <- renderPlot({
+        generateTrendChart()
+      })
+    },
+    ignoreNULL = FALSE
   })
 
   # Load data when server starts
