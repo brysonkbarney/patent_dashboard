@@ -5,6 +5,12 @@ library(ggplot2)
 library(tidyverse)
 library(data.table)
 
+# Enable auto reload
+options(shiny.autoreload = TRUE)
+options(shiny.autoreload.pattern = glob2rx("*.R, *.htm, *.html, *.js, *.css, *.png, *.jpg, *.jpeg, *.gif"))
+options(shiny.autoreload.interval = 500)
+
+
 # Define the UI for the dashboard
 ui <- dashboardPage(
   dashboardHeader(title = "Patent Dashboard"),
@@ -83,12 +89,12 @@ ui <- dashboardPage(
               selectInput(
                 "comp_input1",
                 "Patent Codes",
-                choices = c("Option 1", "Option 2", "Option 3")
+                choices = c("B60L5/", "Option 2", "Option 3")
               ),
               selectInput(
                 "comp_input2",
                 "Patent Subcodes",
-                choices = c("Option 1", "Option 2", "Option 3")
+                choices = c("04", "18", "Option 3")
               ),
               selectInput(
                 "comp_input3",
@@ -210,9 +216,9 @@ server <- function(input, output, session) {
           uniqueN(patent_id)
       ) %>%
       arrange(desc(total)) %>%
-      slice(1:100)
+      slice(1:10)
     totals <-
-      totals[order(totals$total, decreasing = T), ] %>% slice(1:100)
+      totals[order(totals$total, decreasing = T), ] %>% slice(1:10)
 
     # Calculate avg claim count for top 10 companies
     claims <- dt %>%
@@ -221,9 +227,10 @@ server <- function(input, output, session) {
       unique() %>%
       group_by(disambig_assignee_organization) %>%
       summarise(avg_claims = round(mean(num_claims)))
-
+    
+    print(str(claims))
     # Create a bar chart using ggplot2
-    chart <- ggplot(claims_data, aes(x = company, y = avg_claims)) +
+    chart <- ggplot(totals, aes(x = disambig_assignee_organization, y = claims$avg_claims)) +
       geom_bar(stat = "identity", fill = "steelblue") +
       theme_minimal() +
       labs(title = "Average Claims", x = "Company", y = "Average Number of Claims")
