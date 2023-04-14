@@ -5,7 +5,7 @@ library(ggplot2)
 library(tidyverse)
 library(data.table)
 
-# Enable auto reload
+# Enable auto reload and
 options(shiny.autoreload = TRUE)
 options(shiny.autoreload.pattern = glob2rx("*.R, *.htm, *.html, *.js, *.css, *.png, *.jpg, *.jpeg, *.gif"))
 options(shiny.autoreload.interval = 500)
