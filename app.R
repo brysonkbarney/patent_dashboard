@@ -5,6 +5,12 @@ library(ggplot2)
 library(tidyverse)
 library(data.table)
 
+
+# Enable auto reload and
+options(shiny.autoreload = TRUE)
+options(shiny.autoreload.pattern = glob2rx("*.R, *.htm, *.html, *.js, *.css, *.png, *.jpg, *.jpeg, *.gif"))
+options(shiny.autoreload.interval = 500)
+
 # Define the UI for the dashboard
 ui <- dashboardPage(
   dashboardHeader(title = "Patent Dashboard"),
@@ -34,7 +40,7 @@ ui <- dashboardPage(
           "Navigate to the analysis pages using the sidebar menu to perform some analysis."
         )
       ),
-      
+
       # Competition Analysis page content
       tabItem(
         tabName = "competition",
@@ -72,7 +78,7 @@ ui <- dashboardPage(
           )
         )
       ),
-      
+
       # Trends Analysis page content
       tabItem(
         tabName = "trends",
@@ -93,7 +99,7 @@ ui <- dashboardPage(
               selectInput(
                 "comp_input3",
                 "Graph Type",
-                choices = c("Option 1", "Option 2", "Option 3")
+                choices = c("Timeline", "State Map", "Option 3")
               ),
               actionButton("trends_analyze", "Create Graph")
             )
@@ -124,7 +130,7 @@ server <- function(input, output, session) {
     
     # Convert patent_id to character
     # cpc$patent_id <- as.character(cpc$patent_id)
-    
+   
     # Filter the cpc codes
     # dt <-
     #  cpc %>% filter(grepl(
@@ -132,7 +138,7 @@ server <- function(input, output, session) {
     #  x = cpc$cpc_group,
     # ignore.case = TRUE
     # ))
-    
+
     # Merge with patents and assignee
     # dt <- merge(dt, patent, by = 'patent_id')
     # dt <- merge(dt, assignee, by = 'patent_id')*/
@@ -142,7 +148,7 @@ server <- function(input, output, session) {
     return(dt)
     return(choices)
   }
-  
+
   generateTotalPatentsChart <- function(patent_id) {
     totals <-
       dt %>%
@@ -151,13 +157,11 @@ server <- function(input, output, session) {
       summarize(total = uniqueN(patent_id)) %>%
       arrange(desc(total)) %>%
       slice(1:10) # Select the top 10 companies
-    
     chart <- ggplot(totals, aes(x = disambig_assignee_organization, y = total)) +
       geom_bar(stat = "identity", fill = "steelblue") +
       theme_minimal() +
       labs(title = "Total Patents", x = "Company", y = "Number of Patents") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotate x-axis labels for better readability
-    
     return(chart)
   }
   
@@ -200,7 +204,6 @@ server <- function(input, output, session) {
     return(chart)
   }
   
-  
   generateAvgClaimsChart <- function(patent_id) {
     # Get top 10 companies
     totals <-
@@ -212,6 +215,7 @@ server <- function(input, output, session) {
           uniqueN(patent_id)
       ) %>%
       arrange(desc(total)) %>%
+
       slice(1:100)
     totals <-
       totals[order(totals$total, decreasing = T), ] %>% slice(1:100)
@@ -224,20 +228,28 @@ server <- function(input, output, session) {
       group_by(disambig_assignee_organization) %>%
       summarise(avg_claims = round(mean(num_claims)))
     
+    print(str(claims))
     # Create a bar chart using ggplot2
-    chart <- ggplot(claims_data, aes(x = company, y = avg_claims)) +
+    chart <- ggplot(totals, aes(x = disambig_assignee_organization, y = claims$avg_claims)) +
       geom_bar(stat = "identity", fill = "steelblue") +
       theme_minimal() +
       labs(title = "Average Claims", x = "Company", y = "Average Number of Claims")
-    
+
     return(chart)
   }
-  
+
   # Reactive patent_id based on input
   patent_id <- reactive({
     paste0(input$patent_code_input, input$patent_subcode_input)
   })
   
+  generateTimeline <- function(patent_id) {
+    
+  }
+  
+  generateMap <- function(patent_id) {
+    
+  }
   generateChartCompChart <- reactive({
     data <- data.frame(x = 1:10, y = rnorm(10))
     if (input$comp_graph_type_input == "Total Patents") {
@@ -249,6 +261,7 @@ server <- function(input, output, session) {
     }
   })
   
+
   
   # Update the plot when the analyze button is clicked
   observeEvent(input$comp_analyze,
@@ -260,11 +273,39 @@ server <- function(input, output, session) {
                ignoreNULL = FALSE
   )
   
+
+  generateTrendChart <- reactive({
+    data <- data.frame(x = 1:10, y = rnorm(10))
+    if (input$comp_graph_type_input == "Timeline") {
+      generateTimeline(patent_id)
+    } else if (input$comp_graph_type_input == "State Map") {
+      generateMap(patent_id)
+    } else if (input$comp_graph_type_input == "Avg Claims") {
+        # Add function heree
+    }
+  })
+
+
+  # Update the plot when the analyze button is clicked
+  observeEvent(input$comp_analyze,
+    {
+      output$comp_chart <- renderPlot({
+        generateChartCompChart()
+      })
+    },
+    ignoreNULL = FALSE
+  )
+
   # Trends Analysis chart output
   output$trends_chart <- renderPlot({
-    # Placeholder for the chart generation code
+    {
+      output$comp_chart <- renderPlot({
+        generateTrendChart()
+      })
+    },
+    ignoreNULL = FALSE
   })
-  
+
   # Load data when server starts
   dt <- load_data()
 }
